@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import colors from 'tailwindcss/colors';
 
 const config: Config = {
   content: [
@@ -9,9 +10,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#FD366E'
+        primary: '#0d9aff'
       }
     }
+  },
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          "primary": "#0d9aff",
+          "neutral": colors.slate['500']
+        },
+      },
+      "dark"
+    ],
   },
   plugins: [
     require('@tailwindcss/forms'),

@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from 'react';
+import { FaWandMagicSparkles, FaScissors } from "react-icons/fa6";
+import { LuRectangleHorizontal, LuRectangleVertical, LuSquare } from "react-icons/lu";
+
 
 import Container from '@/components/Container';
 import CldImage from '@/components/CldImage';
@@ -8,51 +11,43 @@ import Button from '@/components/Button';
 
 import { CloudinaryResource } from '@/types/cloudinary';
 
-const transformations: Array<Record<string, string>> = [
-  {
-    label: 'Restore',
-    prop: 'restore'
-  },
-  {
-    label: 'Remove Background',
-    prop: 'removeBackground'
-  },
-  {
-    label: 'Black & White',
-    prop: 'grayscale'
-  },
-  {
-    label: 'Square',
-  },
-]
-
 const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
-  const activeTransformations: Record<string, any> = {};
 
-  const [rotate, setRotate] = useState<number>(0);
+  const [activeTransformations, setActiveTransformations] = useState<Record<string, any>>({});
 
-  const [restore, setRestore] = useState<boolean>(false);
-  const [removeBackground, setRemoveBackground] = useState<boolean>(false);
+  const transformations: Record<string, any> = {};
 
-  const hasAiEnabled = !!restore || !!removeBackground;
+  Object.entries(activeTransformations).forEach(([_, group]) => {
+    Object.entries(group).forEach(([key, value]) => {
+      if ( ['restore', 'removeBackground'].includes(key) ) {
+        transformations[key] = true;
+      } else if ( key === 'square' && value === true ) {
+        transformations.height = resource.width;
+        transformations.crop = 'fill';
+      } else if ( key === 'landscape' && value === true ) {
+        transformations.height = Math.floor(resource.width / ( 16 / 9 ));
+        transformations.crop = 'fill';
+      } else if ( key === 'portrait' && value === true ) {
+        transformations.width = Math.floor(resource.height / ( 16 / 9 ));
+        transformations.crop = 'fill';
+      }
+    })
+  });
 
-  const [square, setSquare] = useState<boolean>(false);
-  const [landscape, setLandscape] = useState<boolean>(false);
-  const [portrait, setPortrait] = useState<boolean>(false);
+  function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const group = event.target.name;
+    const option = event.target.value;
 
-  const hasCrop = !!square || !!landscape || !!portrait;
-
-  if ( square ) {
-    activeTransformations.height = resource.width;
-    activeTransformations.crop = 'fill';
-  } else if ( landscape ) {
-    activeTransformations.height = Math.floor(resource.width / ( 16 / 9 ));
-    activeTransformations.crop = 'fill';
-  } else if ( portrait ) {
-    activeTransformations.width = Math.floor(resource.height / ( 16 / 9 ));
-    activeTransformations.crop = 'fill';
+    setActiveTransformations(prev => {
+      return {
+        ...prev,
+        [group]: {
+          [option]: true
+        }
+      }
+    })
   }
-console.log('rotate', rotate)
+
   return (
     <Container className="grid grid-cols-2 gap-4">
       <CldImage
@@ -60,52 +55,68 @@ console.log('rotate', rotate)
         height={resource.height}
         src={resource.public_id}
         alt={resource.context?.alt || ''}
-        restore={restore}
-        removeBackground={removeBackground}
-        effects={[
-          {
-            angle: rotate
-          }
-        ]}
-        {...activeTransformations}
+        {...transformations}
       />
       <div>
 
+        <form>
+          <h2 className="text-xl font-bold mb-4">AI</h2>
+        
+          <ul className="flex gap-2 mb-6">
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!activeTransformations.ai || Object.entries(activeTransformations.ai).length === 0 ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="ai" value="" checked={!activeTransformations.ai || Object.entries(activeTransformations.ai).length === 0} onChange={handleOnChange} />
+                <span className="font-semibold text-white">None</span> 
+              </label>
+            </li>
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${activeTransformations.ai?.restore ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="ai" value="restore" checked={!!activeTransformations.ai?.restore} onChange={handleOnChange} />
+                <FaWandMagicSparkles />
+                <span className="font-semibold text-white">Restore</span> 
+              </label>
+            </li>
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${activeTransformations.ai?.removeBackground ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="ai" value="removeBackground" checked={!!activeTransformations.ai?.removeBackground} onChange={handleOnChange} />
+                <FaScissors />
+                <span className="font-semibold text-white">Remove Background</span> 
+              </label>
+            </li>
+          </ul>
 
-        {/* <ul className="grid gap-2">
-          <li>
-            <Button color={!!rotate ? 'primary' : 'slate'} onClick={() => {
-              if ( rotate === 315 ) {
-                setRotate(0);
-              } else {
-                setRotate(rotate + 45);
-              }
-            }}>Rotate</Button>
-          </li>
-        </ul> */}
+          <h2 className="text-xl font-bold mb-4">Crop</h2>
 
-        <h2 className="text-xl font-bold">AI</h2>
-        <ul className="grid gap-2">
-          <li>
-            <Button color={!!restore ? 'primary' : 'slate'} onClick={() => setRestore(!restore)} disabled={!restore && hasAiEnabled}>Restore</Button>
-          </li>
-          <li>
-            <Button color={!!removeBackground ? 'primary' : 'slate'} onClick={() => setRemoveBackground(!removeBackground)} disabled={!removeBackground && hasAiEnabled}>Remove Background</Button>
-          </li>
-        </ul>
-
-        <h2 className="text-xl font-bold">Crop</h2>
-        <ul className="grid gap-2">
-          <li>
-            <Button color={!!square ? 'primary' : 'slate'} onClick={() => setSquare(!square)} disabled={!square && hasCrop}>Square</Button>
-          </li>
-          <li>
-            <Button color={!!landscape ? 'primary' : 'slate'} onClick={() => setLandscape(!landscape)} disabled={!landscape && hasCrop}>Landscape</Button>
-          </li>
-          <li>
-            <Button color={!!portrait ? 'primary' : 'slate'} onClick={() => setPortrait(!portrait)} disabled={!portrait && hasCrop}>Portrait</Button>
-          </li>
-        </ul>
+          <ul className="flex gap-2">
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!activeTransformations.crop || Object.entries(activeTransformations.crop).length === 0 ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="crop" value="" checked={!activeTransformations.crop || Object.entries(activeTransformations.crop).length === 0} onChange={handleOnChange} />
+                <span className="font-semibold text-white">None</span> 
+              </label>
+            </li>
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.crop?.square ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="crop" value="square" checked={!!activeTransformations.crop?.square} onChange={handleOnChange} />
+                <LuSquare />
+                <span className="font-semibold text-white">Square</span> 
+              </label>
+            </li>
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.crop?.landscape ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="crop" value="landscape" checked={!!activeTransformations.crop?.landscape} onChange={handleOnChange} />
+                <LuRectangleHorizontal />
+                <span className="font-semibold text-white">Landscape</span> 
+              </label>
+            </li>
+            <li className="mb-1">
+              <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.crop?.portrait ? 'btn-primary' : 'btn-neutral'}`}>
+                <input className="sr-only" type="radio" name="crop" value="portrait" checked={!!activeTransformations.crop?.portrait} onChange={handleOnChange} />
+                <LuRectangleVertical />
+                <span className="font-semibold text-white">Portait</span> 
+              </label>
+            </li>
+          </ul>
+        </form>
       </div>
     </Container>
   )
