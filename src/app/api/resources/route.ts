@@ -7,6 +7,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const { resources } = await cloudinary.api.resources_by_tag(String(process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_TAG), { context: true });
