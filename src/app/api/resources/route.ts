@@ -11,7 +11,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const { resources } = await cloudinary.api.resources_by_tag(String(process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_TAG), { context: true });
+    const { resources } = await cloudinary.api.resources_by_tag(String(process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_TAG), {
+      max_results: 50,
+      context: true
+    });
 
     return NextResponse.json({
       data: resources

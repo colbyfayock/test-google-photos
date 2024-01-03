@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { CldUploadWidgetResults } from 'next-cloudinary';
-import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 
 import Container from '@/components/Container';
 import CldUploadWidget from '@/components/CldUploadWidget';
@@ -77,7 +76,7 @@ const MediaLibrary = () => {
       return [resource, ...(prev || [])]
     });
 
-    formRef.current?.reset();
+    handleOnClearSelection();
   }
 
   return (
@@ -146,40 +145,37 @@ const MediaLibrary = () => {
 
       <form ref={formRef}>
         {Array.isArray(resources) && (
-          <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 640: 2, 900: 3, 1024: 4}}>
-            <Masonry>
-              {resources.map((resource) => {
-                const isChecked = selected.includes(resource.public_id);
-                return (
-                  <div key={resource.public_id} className="rounded overflow-hidden bg-white dark:bg-slate-700">
-                    <div className="relative">
-                      <label className="absolute top-3 left-3 p-1" htmlFor={resource.public_id}>
-                        <span className="sr-only">Select Image { resource.public_id }</span>
-                        <input id={resource.public_id} className="checkbox" type="checkbox" name={resource.public_id} checked={isChecked} onChange={handleOnSelectImage} />
-                      </label>
-                      <Link className={`block cursor-pointer border-8 ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
-                        <CldImage
-                          className="w-full h-auto"
-                          width={800}
-                          height={600}
-                          src={resource.public_id}
-                          alt={resource.context?.alt || ''}
-                        />
-                      </Link>
-                    </div>
-                    { resource.context?.caption && (
-                      <div className="py-4 px-5">
-                        <p className="mb-1 text-md font-bold leading-tight text-neutral-800 dark:text-neutral-50">
-                          { resource.context?.caption || '' }
-                        </p>
-                      </div>
-                    )}
-                    
+          <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
+            {resources.map((resource) => {
+              const isChecked = selected.includes(resource.public_id);
+              return (
+                <li key={resource.public_id} className="rounded overflow-hidden bg-white dark:bg-slate-700">
+                  <div className="relative">
+                    <label className="absolute top-3 left-3 p-1" htmlFor={resource.public_id}>
+                      <span className="sr-only">Select Image { resource.public_id }</span>
+                      <input id={resource.public_id} className="checkbox" type="checkbox" name={resource.public_id} checked={isChecked} onChange={handleOnSelectImage} />
+                    </label>
+                    <Link className={`block cursor-pointer border-8 ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
+                      <CldImage
+                        width={800}
+                        height={600}
+                        src={resource.public_id}
+                        alt={resource.context?.alt || ''}
+                      />
+                    </Link>
                   </div>
-                )
-              })}
-            </Masonry>
-          </ResponsiveMasonry>
+                  { resource.context?.caption && (
+                    <div className="py-4 px-5">
+                      <p className="mb-1 text-md font-bold leading-tight text-neutral-800 dark:text-neutral-50">
+                        { resource.context?.caption || '' }
+                      </p>
+                    </div>
+                  )}
+                  
+                </li>
+              )
+            })}
+          </ul>
         )}
       </form>
     </Container>
