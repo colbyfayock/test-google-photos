@@ -20,11 +20,9 @@ const MediaLibrary = () => {
   const [selected, setSelected] = useState<Array<string>>([]);
   const [creation, setCreation] = useState<string>();
 
-  console.log('selected', selected)
-
   useEffect(() => {
     (async function run() {
-      const { data } = await fetch('/api/resources').then(r => r.json());
+      const { data } = await fetch('/api/resources', { cache: 'no-store' }).then(r => r.json());
       setResources(data);
     })();
   }, [])

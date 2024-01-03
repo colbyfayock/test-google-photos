@@ -12,12 +12,10 @@ export async function POST(request: Request) {
   const file = requestFormData.get('file') as ( File | string );
   const tags = requestFormData.getAll('tags') || [];
 
-
   try {
     let results;
 
     if ( file instanceof Blob ) {
-      console.log('asdf')
       const arrayBuffer = await file.arrayBuffer();
       const buffer = new Uint8Array(arrayBuffer);
 

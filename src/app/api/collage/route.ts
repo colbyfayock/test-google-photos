@@ -45,7 +45,6 @@ export async function POST(request: Request) {
   });
 
   const paramsString = Object.keys(parameters).map(key => `${key}=${parameters[key]}`).join('&');
-  console.log('paramsString', paramsString)
 
   const paramsHash = await createHashFromString(`${paramsString}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`);
 
