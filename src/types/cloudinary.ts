@@ -3,6 +3,8 @@ export interface CloudinaryResource {
     alt?: string;
     caption?: string;
   };
+  height: number;
   public_id: string;
   secure_url: string;
+  width: number;
 }

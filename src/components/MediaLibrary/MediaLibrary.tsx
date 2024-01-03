@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { CldUploadWidgetResults } from 'next-cloudinary';
 
 import Container from '@/components/Container';
+import CldUploadWidget from '@/components/CldUploadWidget';
 import CldImage from '@/components/CldImage';
-import Upload from '@/components/Upload';
 import Button from '@/components/Button';
 
 import { getCollage } from '@/lib/cloudinary';
@@ -15,8 +17,10 @@ const MediaLibrary = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const modalRef = useRef<HTMLDialogElement>(null);
   const [resources, setResources] = useState<Array<CloudinaryResource>>();
-  const [selected, setSelected] = useState<Array<string>>();
+  const [selected, setSelected] = useState<Array<string>>([]);
   const [creation, setCreation] = useState<string>();
+
+  console.log('selected', selected)
 
   useEffect(() => {
     (async function run() {
@@ -29,20 +33,22 @@ const MediaLibrary = () => {
     modalRef.current?.showModal();
   }, [creation]);
 
-  async function handleOnUploadSuccess(uploads: Array<CloudinaryResource>) {
-    setResources(prev => {
-      return [...uploads, ...(prev || [])]
-    })
+  function handleOnClearSelection() {
+    setSelected([]);
   }
 
-  async function handleOnFormChange(event: React.FormEvent<HTMLFormElement>) {
-    const form = event.currentTarget as typeof event.currentTarget;
-    const fields = Array.from(form?.elements) as Array<HTMLInputElement>;
-    const selectedFields = fields
-      .filter(field => field.type === 'checkbox' && field.checked)
-      .map(field => field.name);
+  async function handleOnUploadSuccess(results: CldUploadWidgetResults) {
+    setResources(prev => [results.info as CloudinaryResource, ...(prev || [])]);
+  }
 
-    setSelected(selectedFields);
+  async function handleOnSelectImage(event: React.ChangeEvent<HTMLInputElement>) {
+    setSelected((prev) => {
+      if ( event.target.checked ) {
+        return Array.from(new Set([...(prev || []), event.target.name]));
+      } else {
+        return prev.filter((id) => id !== event.target.name);
+      }
+    });
   }
 
   async function handleOnCreateCollage() {
@@ -99,35 +105,66 @@ const MediaLibrary = () => {
         </dialog>
       )}
 
-      <Upload className="mb-12" onSuccess={handleOnUploadSuccess} />
-
-      <div className="flex justify-between">
-        <p className="mb-12">
-          {selected && (
-            <span>{ selected.length } Selected</span>
+      <div className="flex justify-between items-center mb-12">
+        <div className="flex items-center gap-4">
+          {selected.length === 0 && (
+            <CldUploadWidget
+              signatureEndpoint="/api/sign-cloudinary-params"
+              onSuccess={handleOnUploadSuccess}
+              options={{
+                tags: [String(process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_TAG)]
+              }}
+            >
+              {({ open }) => (
+                <Button onClick={() => open()}>Upload</Button>
+              )}
+            </CldUploadWidget>
           )}
-        </p>
-        <p>
-          <Button onClick={handleOnCreateCollage}>Create Collage</Button>
-        </p>
+          {selected.length > 0 && (
+            <>
+              <ul>
+                <li>
+                  <Button color="red" onClick={handleOnClearSelection}>Clear Selected</Button>
+                </li>
+              </ul>
+              <p>
+                <span>{ selected?.length } Selected</span>
+              </p>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center gap-4">
+          {selected && selected.length > 0 && (
+            <ul>
+              <li>
+                <Button onClick={handleOnCreateCollage}>Create Collage</Button>
+              </li>
+            </ul>
+          )}
+        </div>
       </div>
 
-      <form ref={formRef} onChange={handleOnFormChange}>
+      <form ref={formRef}>
         {Array.isArray(resources) && (
           <ul className="grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12">
             {resources.map((resource) => {
+              const isChecked = selected.includes(resource.public_id);
               return (
                 <li key={resource.public_id} className="rounded overflow-hidden bg-white dark:bg-slate-700">
                   <div className="relative">
-                    <input id={resource.public_id} type="checkbox" name={resource.public_id} />
-                    <label htmlFor={resource.public_id}>
+                    <label className="absolute top-1 left-1 p-1" htmlFor={resource.public_id}>
+                      <span className="sr-only">Select Image { resource.public_id }</span>
+                      <input id={resource.public_id} className="checkbox" type="checkbox" name={resource.public_id} checked={isChecked} onChange={handleOnSelectImage} />
+                    </label>
+                    <Link className={`block cursor-pointer border-4 ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
                       <CldImage
                         width={800}
                         height={600}
                         src={resource.public_id}
                         alt={resource.context?.alt || ''}
                       />
-                    </label>
+                    </Link>
                   </div>
                   { resource.context?.caption && (
                     <div className="py-4 px-5">

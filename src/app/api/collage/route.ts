@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
   const paramsHash = await createHashFromString(`${paramsString}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`);
 
-  formData.append('api_key', process.env.CLOUDINARY_API_KEY || '');
+  formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '');
   formData.append('timestamp', String(timestamp));
   formData.append('signature', paramsHash);
 
