@@ -13,19 +13,19 @@ import { getCollage } from '@/lib/cloudinary';
 
 import { CloudinaryResource } from '@/types/cloudinary';
 
-const MediaLibrary = ({ resources: initialResources }: { resources: Array<CloudinaryResource> }) => {
+const MediaLibrary = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const modalRef = useRef<HTMLDialogElement>(null);
-  const [resources, setResources] = useState<Array<CloudinaryResource>>(initialResources);
+  const [resources, setResources] = useState<Array<CloudinaryResource>>();
   const [selected, setSelected] = useState<Array<string>>([]);
   const [creation, setCreation] = useState<string>();
 
-  // useEffect(() => {
-  //   (async function run() {
-  //     const { data } = await fetch('/api/resources', { cache: 'no-store' }).then(r => r.json());
-  //     setResources(data);
-  //   })();
-  // }, [])
+  useEffect(() => {
+    (async function run() {
+      const { data } = await fetch('/api/resources', { cache: 'no-store' }).then(r => r.json());
+      setResources(data);
+    })();
+  }, [])
 
   useEffect(() => {
     modalRef.current?.showModal();
