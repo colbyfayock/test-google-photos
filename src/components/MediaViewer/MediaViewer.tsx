@@ -169,7 +169,7 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
 
             <h2 className="text-xl font-bold mb-4">Crop</h2>
 
-            <ul className="flex gap-2">
+            <ul className="flex gap-2 mb-6">
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!activeTransformations.crop || Object.entries(activeTransformations.crop).length === 0 ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="crop" value="" checked={!activeTransformations.crop || Object.entries(activeTransformations.crop).length === 0} onChange={handleOnChange} />
@@ -201,7 +201,7 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
 
             <h2 className="text-xl font-bold mb-4">Filters</h2>
 
-            <ul className="flex gap-2">
+            <ul className="flex gap-2 mb-6">
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!activeTransformations.filters || Object.entries(activeTransformations.filters).length === 0 ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="filters" value="" checked={!activeTransformations.filters || Object.entries(activeTransformations.filters).length === 0} onChange={handleOnChange} />
@@ -233,7 +233,7 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
 
             <h2 className="text-xl font-bold mb-4">Effects</h2>
 
-            <ul className="flex gap-2">
+            <ul className="flex gap-2 mb-6">
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!activeTransformations.effects || Object.entries(activeTransformations.effects).length === 0 ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="effects" value="" checked={!activeTransformations.effects || Object.entries(activeTransformations.effects).length === 0} onChange={handleOnChange} />
