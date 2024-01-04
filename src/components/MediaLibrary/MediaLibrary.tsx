@@ -132,31 +132,30 @@ const MediaLibrary = () => {
           )}
         </div>
 
-        <div className="flex items-center gap-4">
-          {selected && selected.length > 0 && (
-            <ul>
-              <li>
-                <Button onClick={handleOnCreateCollage}>Create Collage</Button>
-              </li>
-            </ul>
-          )}
-        </div>
+        {selected && selected.length > 0 && (
+          <ul className="flex items-center gap-4">
+            <li>
+              <Button onClick={handleOnCreateCollage}>Create Collage</Button>
+            </li>
+          </ul>
+        )}
       </div>
 
       <form ref={formRef}>
         {Array.isArray(resources) && (
-          <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
             {resources.map((resource) => {
               const isChecked = selected.includes(resource.public_id);
               return (
-                <li key={resource.public_id} className="rounded overflow-hidden bg-white dark:bg-slate-700">
+                <li key={resource.public_id} className="overflow-hidden bg-white dark:bg-slate-700">
                   <div className="relative">
                     <label className="absolute top-3 left-3 p-1" htmlFor={resource.public_id}>
                       <span className="sr-only">Select Image { resource.public_id }</span>
                       <input id={resource.public_id} className="checkbox" type="checkbox" name={resource.public_id} checked={isChecked} onChange={handleOnSelectImage} />
                     </label>
-                    <Link className={`block cursor-pointer border-8 ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
+                    <Link className={`block cursor-pointer border-8 transition-[border] ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
                       <CldImage
+                        className="block"
                         width={800}
                         height={600}
                         src={resource.public_id}
