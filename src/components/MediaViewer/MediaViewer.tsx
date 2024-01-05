@@ -38,6 +38,20 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
         transformations.blur = 800;
       } else if ( key === 'pixelate' && value === true ) {
         transformations.pixelate = 30;
+      } else if ( ['cloudinary', 'nextjs', 'react'].includes(key) ) {
+        const stickers: Record<string, string> = {
+          cloudinary: 'assets/sticker-cloudinary_naatrr',
+          nextjs: 'assets/sticker-nextjs_yypbnu',
+          react: 'assets/sticker-react_pvradx',
+        }
+        transformations.overlays = [{
+          publicId: stickers[key],
+          position: {
+            gravity: 'south_east',
+            x: 50,
+            y: 50
+          }
+        }];
       }
     })
   });
@@ -248,6 +262,50 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
                   <input className="sr-only" type="radio" name="effects" value="pixelate" checked={!!activeTransformations.effects?.pixelate} onChange={handleOnChange} />
                   <BiSolidGrid />
                   <span className="font-semibold text-white">Pixelate</span> 
+                </label>
+              </li>
+            </ul>
+
+            <h2 className="text-xl font-bold mb-4">Stickers</h2>
+
+            <ul className="flex gap-2 mb-6">
+              <li className="mb-1">
+                <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!activeTransformations.stickers || Object.entries(activeTransformations.stickers).length === 0 ? 'btn-primary' : 'btn-neutral'}`}>
+                  <input className="sr-only" type="radio" name="stickers" value="" checked={!activeTransformations.stickers || Object.entries(activeTransformations.stickers).length === 0} onChange={handleOnChange} />
+                  <span className="font-semibold text-white">None</span> 
+                </label>
+              </li>
+              <li className="mb-1">
+                <label className={`w-auto inline-flex items-center gap-2 cursor-pointer p-2 rounded border-4 ${!!activeTransformations.stickers?.cloudinary ? 'border-primary' : 'border-neutral'}`}>
+                  <input className="sr-only" type="radio" name="stickers" value="cloudinary" checked={!!activeTransformations.stickers?.cloudinary} onChange={handleOnChange} />
+                  <CldImage
+                    src="assets/sticker-cloudinary_naatrr"
+                    width="189"
+                    height="133"
+                    alt="Cloudinary"
+                  />
+                </label>
+              </li>
+              <li className="mb-1">
+                <label className={`w-auto inline-flex items-center gap-2 cursor-pointer p-2 rounded border-4 ${!!activeTransformations.stickers?.nextjs ? 'border-primary' : 'border-neutral'}`}>
+                  <input className="sr-only" type="radio" name="stickers" value="nextjs" checked={!!activeTransformations.stickers?.nextjs} onChange={handleOnChange} />
+                  <CldImage
+                    src="assets/sticker-nextjs_yypbnu"
+                    width="189"
+                    height="133"
+                    alt="Next.js"
+                  />
+                </label>
+              </li>
+              <li className="mb-1">
+                <label className={`w-auto inline-flex items-center gap-2 cursor-pointer p-2 rounded border-4 ${!!activeTransformations.stickers?.react ? 'border-primary' : 'border-neutral'}`}>
+                  <input className="sr-only" type="radio" name="stickers" value="react" checked={!!activeTransformations.stickers?.react} onChange={handleOnChange} />
+                  <CldImage
+                    src="assets/sticker-react_pvradx"
+                    width="189"
+                    height="133"
+                    alt="React"
+                  />
                 </label>
               </li>
             </ul>
