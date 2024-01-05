@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'
-import { FaWandMagicSparkles, FaScissors } from "react-icons/fa6";
+import { FaWandMagicSparkles, FaScissors, FaDroplet } from "react-icons/fa6";
 import { LuRectangleHorizontal, LuRectangleVertical, LuSquare } from "react-icons/lu";
+import { BiSolidGrid } from "react-icons/bi";
+import { IoColorPalette } from "react-icons/io5";
 import { getCldImageUrl } from 'next-cloudinary';
 
 import Container from '@/components/Container';
@@ -133,6 +135,7 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
       </Container>
       <Container className="grid grid-cols-2 gap-4">
         <CldImage
+          key={JSON.stringify(transformations)}
           width={resource.width}
           height={resource.height}
           src={resource.public_id}
@@ -211,22 +214,15 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.filters?.grayscale ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="filters" value="grayscale" checked={!!activeTransformations.filters?.grayscale} onChange={handleOnChange} />
-                  <LuSquare />
+                  <IoColorPalette />
                   <span className="font-semibold text-white">Grayscale</span> 
                 </label>
               </li>
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.filters?.sepia ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="filters" value="sepia" checked={!!activeTransformations.filters?.sepia} onChange={handleOnChange} />
-                  <LuRectangleHorizontal />
+                  <IoColorPalette />
                   <span className="font-semibold text-white">Sepia</span> 
-                </label>
-              </li>
-              <li className="mb-1">
-                <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.filters?.vignette ? 'btn-primary' : 'btn-neutral'}`}>
-                  <input className="sr-only" type="radio" name="filters" value="vignette" checked={!!activeTransformations.filters?.vignette} onChange={handleOnChange} />
-                  <LuRectangleHorizontal />
-                  <span className="font-semibold text-white">Vignette</span> 
                 </label>
               </li>
             </ul>
@@ -243,14 +239,14 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.effects?.blur ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="effects" value="blur" checked={!!activeTransformations.effects?.blur} onChange={handleOnChange} />
-                  <LuSquare />
+                  <FaDroplet />
                   <span className="font-semibold text-white">Blur</span> 
                 </label>
               </li>
               <li className="mb-1">
                 <label className={`btn w-auto inline-flex items-center gap-2 cursor-pointer ${!!activeTransformations.effects?.pixelate ? 'btn-primary' : 'btn-neutral'}`}>
                   <input className="sr-only" type="radio" name="effects" value="pixelate" checked={!!activeTransformations.effects?.pixelate} onChange={handleOnChange} />
-                  <LuRectangleHorizontal />
+                  <BiSolidGrid />
                   <span className="font-semibold text-white">Pixelate</span> 
                 </label>
               </li>

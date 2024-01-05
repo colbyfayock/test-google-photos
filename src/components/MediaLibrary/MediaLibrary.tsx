@@ -153,11 +153,11 @@ const MediaLibrary = () => {
                       <span className="sr-only">Select Image { resource.public_id }</span>
                       <input id={resource.public_id} className="checkbox" type="checkbox" name={resource.public_id} checked={isChecked} onChange={handleOnSelectImage} />
                     </label>
-                    <Link className={`block cursor-pointer border-8 transition-[border] ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
+                    <Link className={`bg-blue-100 block cursor-pointer border-8 transition-[border] ${isChecked ? 'border-primary' : 'border-white'}`} href={`/images/${resource.public_id}`}>
                       <CldImage
                         className="block"
-                        width={800}
-                        height={600}
+                        width={resource.width}
+                        height={resource.height}
                         src={resource.public_id}
                         alt={resource.context?.alt || ''}
                       />
